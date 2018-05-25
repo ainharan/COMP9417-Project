@@ -18,8 +18,9 @@ numerical_variables = list(x.dtypes [x.dtypes != "object"].index)
 x = x[numerical_variables]
 #x["AMT_REQ_CREDIT_BUREAU_DAY"].fillna(x["AMT_REQ_CREDIT_BUREAU_DAY"].mean())
 #x["AMT_REQ_CREDIT_BUREAU_YEAR"].fillna(x["AMT_REQ_CREDIT_BUREAU_YEAR"].mean())
+x.is_copy = False
 for col in x:
-	x[col].fillna(x[col].mean()
+	x[col].fillna(x[col].mean(),inplace=True)
 
 model = RandomForestClassifier(n_estimators=100)
 #model.fit(x, y)

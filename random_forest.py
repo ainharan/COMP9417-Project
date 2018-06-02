@@ -36,18 +36,6 @@ print('Removing features with more than 80% missing...')
 test = test[test.columns[dataframe.isnull().mean() < 0.85]]
 dataframe= dataframe[dataframe.columns[dataframe.isnull().mean() < 0.85]]
 
-print("Imputing Data...")
-# imputes with the mean of each col
-#for col in dataframe:
-#	dataframe[col].fillna(dataframe[col].mean())
-#dataframe = dataframe.fillna(dataframe.mean())
-#dataframe.dropna(inplace=True)
-X = pd.DataFrame(dataframe)
-dataframe = DataFrameImputer().fit_transform(X)
-
-# get numeric variables
-numeric_variables = list(dataframe.dtypes[dataframe.dtypes != "object"].index)
-
 print("One hot encoding...")
 # One Hot Encoding -  converts categorical data in training into numerical
 cat_features = [col for col in dataframe.columns if dataframe[col].dtype == 'object']
@@ -60,6 +48,22 @@ one_hot = pd.get_dummies(one_hot, columns=cat_features)
 dataframe = one_hot.iloc[:dataframe.shape[0],:] 
 test = one_hot.iloc[dataframe.shape[0]:,] 
 
+print("Imputing Data...")
+# imputes with the mean of each col
+#for col in dataframe:
+#	dataframe[col].fillna(dataframe[col].mean())
+#dataframe = dataframe.fillna(dataframe.mean())
+#dataframe.dropna(inplace=True)
+
+#imp = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
+#imp.fit(dataframe)
+X = pd.DataFrame(dataframe)
+dataframe = DataFrameImputer().fit_transform(X)
+
+
+# get numeric variables
+numeric_variables = list(dataframe.dtypes[dataframe.dtypes != "object"].index)
+
 
 print("fitting baseline model on just numerical values...")
 # fit model on just numerical variables as a baseline
@@ -67,16 +71,24 @@ model = RandomForestRegressor(n_estimators=2, oob_score=True, random_state=42)
 model.fit(dataframe[numeric_variables], labels)
 
 # for regression the oob_score_ (out of bag score) gives the R^2 based on oob predictions
-print(model.oob_score_)
+#print(model.oob_score_)
 
-labels_oob = model.oob_predictions_
+labels_oob = model.oob_prediction_
 print("c-stat ", roc_auc_score(labels, labels_oob))
 print("Out of bag score...")
 print(labels_oob)
 print("Printing importance matrix")
 print(model.feature_importances_)
 
-feature_importances = pd.Series(model.feature_importances_, index=dataframe.columns)
-feature_importances.sort()
-feature_importances.plot(kind="barh")
+#feature_importances = pd.Series(model.feature_importances_, index=dataframe.columns)
+#feature_importances.sort()
+#feature_importances.plot(kind="barh")
+
+feats = {} # a dict to hold feature_name: feature_importance
+for feature, importance in zip(dataframe.columns, model.feature_importances_):
+    feats[feature] = importance #add the name/value pair 
+
+importances = pd.DataFrame.from_dict(feats, orient='index').rename(columns={0: 'Gini-importance'})
+importances.sort_values(by='Gini-importance').plot(kind='bar', rot=45)
+
 plt.show()

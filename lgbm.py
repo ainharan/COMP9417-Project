@@ -192,3 +192,4 @@ lgbm_sub.to_csv('lgbm_submission.csv', index=False)
 
 #Plot Variable Importances
 lgb.plot_importance(lgbm, max_num_features=21, importance_type='split')
+plt.show()

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 from sklearn.ensemble import ExtraTreesClassifier
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -8,7 +9,9 @@ from sklearn.model_selection import cross_val_score
 # Using Skicit-learn to split data into training and testing sets
 from sklearn.model_selection import train_test_split
 
-dataframe = pd.read_csv("C:/Users/Ojasvi/.kaggle/competitions/home-credit-default-risk/application_train.csv")
+PATH = os.getenv('HOME')+'/.kaggle/competitions/home-credit-default-risk/'
+#PATH = "/Users/Ojasvi/.kaggle/competitions/home-credit-default-risk/"
+dataframe = pd.read_csv(PATH + "application_train.csv")
 
 print('The shape of our features is:', dataframe.shape)
 
@@ -61,13 +64,13 @@ print('Mean Absolute Error:', round(np.mean(errors), 2))
 important_features = pd.Series(data=rf.feature_importances_,index=feature_list)
 important_features.sort_values(ascending=False,inplace=True)
 
-#print(important_features)
+print(important_features)
 
-#s = pd.Series(important_features)
+s = pd.Series(important_features)
 
-#s.plot.bar()
+s.plot.bar()
 
-#plt.show()
+plt.show()
 
 # evaluate an LDA model on the dataset using k-fold cross validation
 model = LinearDiscriminantAnalysis()

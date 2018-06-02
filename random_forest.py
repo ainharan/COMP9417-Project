@@ -10,8 +10,7 @@ from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import Imputer
-
-import seaborn as sns
+from DataFrameImputer import DataFrameImputer
 
 PATH = os.getenv('HOME')+'/.kaggle/competitions/home-credit-default-risk/'
 #PATH = "/Users/Ojasvi/.kaggle/competitions/home-credit-default-risk/"
@@ -39,9 +38,12 @@ dataframe= dataframe[dataframe.columns[dataframe.isnull().mean() < 0.85]]
 
 print("Imputing Data...")
 # imputes with the mean of each col
-for col in dataframe:
-	dataframe[col].fillna(dataframe[col].mean())
+#for col in dataframe:
+#	dataframe[col].fillna(dataframe[col].mean())
 #dataframe = dataframe.fillna(dataframe.mean())
+#dataframe.dropna(inplace=True)
+X = pd.DataFrame(dataframe)
+dataframe = DataFrameImputer().fit_transform(X)
 
 # get numeric variables
 numeric_variables = list(dataframe.dtypes[dataframe.dtypes != "object"].index)

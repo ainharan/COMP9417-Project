@@ -74,5 +74,3 @@ model = LinearDiscriminantAnalysis()
 kfold = KFold(n_splits=3, random_state=7)
 result = cross_val_score(model, train_features, train_labels, cv=kfold, scoring='accuracy')
 print(result.mean())
-
-cd 
